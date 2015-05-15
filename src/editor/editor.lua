@@ -1540,3 +1540,54 @@ function SetupKeywords(editor, ext, forcespec, styles, font, fontitalic)
   StylesApplyToEditor(styles or ide.config.styles, editor,
     font or ide.font.eNormal,fontitalic or ide.font.eItalic,lexerstyleconvert)
 end
+
+function EditorTabsToSpaces(editor, numSpaces)
+  if not (editor and editor.spec) then return end
+  local main = editor:GetMainSelection()
+  local instances = {}
+  local length, pos = editor:GetLength(), 0
+  while true do
+    editor:SetTargetStart(pos)
+    editor:SetTargetEnd(length)
+    pos = editor:SearchInTarget('\t')
+    if pos == -1 then break end
+    table.insert(instances, pos)
+    pos = pos + 1
+  end
+  local text = string.rep(' ', numSpaces)
+  editor:BeginUndoAction()
+  for i=#instances,1,-1 do
+    local v = instances[i]
+    editor:SetTargetStart(v)
+    editor:SetTargetEnd(v + 1)
+    editor:ReplaceTarget(text)
+  end
+  editor:EndUndoAction()
+  editor:SetMainSelection(main)
+end
+
+function EditorSpacesToTabs(editor, numSpaces)
+  if not (editor and editor.spec) then return end
+  if numSpaces < 1 then numSpaces = 1 end
+  local main = editor:GetMainSelection()
+  local instances = {}
+  local length, pos = editor:GetLength(), 0
+  local text = string.rep(' ', numSpaces)
+  while true do
+    editor:SetTargetStart(pos)
+    editor:SetTargetEnd(length)
+    pos = editor:SearchInTarget(text)
+    if pos == -1 then break end
+    table.insert(instances, pos)
+    pos = pos + numSpaces
+  end
+  editor:BeginUndoAction()
+  for i=#instances,1,-1 do
+    local v = instances[i]
+    editor:SetTargetStart(v)
+    editor:SetTargetEnd(v + numSpaces)
+    editor:ReplaceTarget('\t')
+  end
+  editor:EndUndoAction()
+  editor:SetMainSelection(main)
+end

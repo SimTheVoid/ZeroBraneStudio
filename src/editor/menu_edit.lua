@@ -42,6 +42,12 @@ editMenu:Append(ID_PREFERENCES, TR("Preferences"), wx.wxMenu {
   { ID_PREFERENCESSYSTEM, TR("Settings: System")..KSC(ID_PREFERENCESSYSTEM) },
   { ID_PREFERENCESUSER, TR("Settings: User")..KSC(ID_PREFERENCESUSER) },
 })
+
+editMenu:Append(ID_TABSANDSPACES, TR("Tabs and spaces"), wx.wxMenu {
+  { ID_TABSTOTABS, TR("All to tabs")..KSC(ID_TABSTOTABS) },
+  { ID_TABSTOSPACES, TR("All to spaces")..KSC(ID_TABSTOSPACES) },
+})
+
 menuBar:Append(editMenu, TR("&Edit"))
 
 editMenu:Check(ID_AUTOCOMPLETEENABLE, ide.config.autocomplete)
@@ -160,8 +166,19 @@ frame:Connect(ID_PREFERENCESUSER, wx.wxEVT_COMMAND_MENU_SELECTED,
     if editor and #editor:GetText() == 0 then
       editor:AddText(generateConfigMessage("User")) end
   end)
+
 frame:Connect(ID_PREFERENCESUSER, wx.wxEVT_UPDATE_UI,
   function (event) event:Enable(ide.configs.user ~= nil) end)
+
+frame:Connect(ID_TABSTOTABS, wx.wxEVT_COMMAND_MENU_SELECTED,
+  function ()
+    EditorSpacesToTabs(GetEditor(), ide.config.editor.tabwidth or 2)
+  end)
+
+frame:Connect(ID_TABSTOSPACES, wx.wxEVT_COMMAND_MENU_SELECTED,
+  function ()
+   EditorTabsToSpaces(GetEditor(), ide.config.editor.tabwidth or 2)
+  end)
 
 frame:Connect(ID_CLEARDYNAMICWORDS, wx.wxEVT_COMMAND_MENU_SELECTED,
   function () DynamicWordsReset() end)

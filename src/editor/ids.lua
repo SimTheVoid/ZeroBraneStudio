@@ -76,6 +76,10 @@ ID_NAVIGATETOMETHOD = NewID()
 ID_PREFERENCES      = NewID()
 ID_PREFERENCESSYSTEM = NewID()
 ID_PREFERENCESUSER  = NewID()
+-- Tab <-> Spaces
+ID_TABSANDSPACES  = NewID()
+ID_TABSTOTABS = NewID()
+ID_TABSTOSPACES = NewID()
 -- Search menu
 ID_FIND             = linux and NewID() or wx.wxID_FIND
 ID_FINDNEXT         = NewID()
